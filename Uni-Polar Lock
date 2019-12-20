@@ -1,0 +1,40 @@
+import curses
+import os
+import sys, tty, termios
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setwarnings(False)
+GPIO.setup(7,GPIO.OUT)
+
+p = GPIO.PWM(7,50)
+p.start(1)
+#before running run the three lines into the python command prompt
+#export TERM=linux
+#export TERMINFO=/etc/terminfo
+#python3 programName.py
+
+def main(win):
+    win.nodelay(True)
+    key="w"
+    win.clear()
+    win.addstr("Detected Key1: ")
+    while 1:
+        try:
+            key = win.getkey()
+            win.clear()
+            win.addstr("Detected key: ")
+            win.addstr(str(key))
+            if key == 'KEY_RIGHT':
+                p.ChangeDutyCycle(7.5)
+                time.sleep(1)
+            elif key == 'KEY_LEFT':
+                p.ChangeDutyCycle(2.5)
+                time.sleep(1)
+            elif key == os.linesep:
+                break
+        except Exception as e:
+            pass
+        
+curses.wrapper(main)
